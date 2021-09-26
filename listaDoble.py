@@ -1,20 +1,34 @@
-from nodoLista import nodoLista
+from nodoDoble import nodoDoble
 
-class listaSimple:
-    def __init__(self):
+class listaDoble:
+    def __init__(self, id, cantidadComponentes, tiempoEnsamblaje):
+        print('creando lista doble')
         self.cabecera = None
         self.ultimo = None
+        self.id = id
+        self.cantidadComponentes = int(cantidadComponentes)
+        self.tiempoEnsamblaje = tiempoEnsamblaje
         self.size = 0
+        self.rellenar(self.cantidadComponentes)
+        self.posicionBrazo = 0
 
     def add(self, dato):
+        print('rellenando')
         self.size += 1
-        nodoAux = nodoLista(dato)
+        nodoAux = nodoDoble(dato)
         if self.cabecera == None:
             self.cabecera = nodoAux
             self.ultimo = nodoAux
         else:
             self.ultimo.siguiente = nodoAux
+            self.ultimo.siguiente.anterior = self.ultimo
             self.ultimo = nodoAux
+
+    def rellenar(self, cantidadComponentes):
+        j = 1
+        for i in range(cantidadComponentes):
+            self.add(j)
+            j += 1
 
     def imprimir(self):
         nodoAux = self.cabecera
@@ -30,5 +44,3 @@ class listaSimple:
             nodoAux = nodoAux.siguiente
         if nodoAux == None:
             return None
-    
-
