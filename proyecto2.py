@@ -82,6 +82,7 @@ class ventana(QMainWindow):
     def inicarSimulacion(self):
         try:
             texto = self.ProductosCombo.currentText()
+            print('Producto a ensamblar '+texto)
             self.maquina.ensamblar(texto)
         except Exception as e:
             print(e)
