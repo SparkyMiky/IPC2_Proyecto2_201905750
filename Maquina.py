@@ -15,7 +15,7 @@ class Maquina:
         try:
             while len(instrucciones) != 0:
                 segundos += 1
-                print('Analizando el segundo '+str(segundos)+'----------------------------------------')
+                print('Analizando el segundo '+str(segundos)+'--------------------------------------')
                 self.listaLineaProducciones.reset()
 
                 for i in instrucciones:
@@ -31,7 +31,7 @@ class Maquina:
                         else:
                             buffer += c
                     componente = int(buffer)
-                    
+
                     lineaProduccion = self.listaLineaProducciones.buscar(linea)
                     if lineaProduccion.cambioPosicion == False and lineaProduccion.ensamblados.buscarInstruccion(i) != True:
                         if lineaProduccion.posicionBrazo < componente:
