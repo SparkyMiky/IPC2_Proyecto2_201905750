@@ -1,4 +1,5 @@
 import re
+from listaSimple import listaSimple
 
 class Producto:
     def __init__(self, nombre, elaboracion):
@@ -6,7 +7,6 @@ class Producto:
         self.elaboracion = elaboracion
         self.instrucciones = []
 
-        i = 0
         estado = 0
         buffer = ''
         instruccion = False
