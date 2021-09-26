@@ -40,7 +40,6 @@ class ventana(QMainWindow):
                                 else:
                                     tiempoEnsamblaje = subsubelem.text.strip()
                         lineaProduccion = listaDoble(numero, cantidadComponentes,tiempoEnsamblaje)
-                        print('el tamano de la linea es: '+str(lineaProduccion.size))
                         listaLineas.add(lineaProduccion)
                 elif elem.tag == 'ListadoProductos':
                     for subelem in elem:
