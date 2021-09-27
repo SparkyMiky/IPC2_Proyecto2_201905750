@@ -86,7 +86,6 @@ class ventana(QMainWindow):
             self.tableWidget.setRowCount(0)
 
             texto = self.ProductosCombo.currentText()
-            print('Producto a ensamblar '+texto)
             datos = self.maquina.ensamblar(texto)
 
             self.tableWidget.setColumnCount(int(self.maquina.cantidadLineas)+1)
