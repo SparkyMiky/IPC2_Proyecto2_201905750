@@ -1,12 +1,14 @@
 import xml.etree.ElementTree as ET
 import sys
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QApplication, QTableWidget, QTableWidgetItem
 from producto import Producto
 from Maquina import Maquina
 from Simulacion import Simulacion
 from listaSimple import listaSimple
 from listaDoble import listaDoble
+from Simulacion import Simulacion
 
 class ventana(QMainWindow):
     def __init__(self):
@@ -16,6 +18,11 @@ class ventana(QMainWindow):
         self.simulacionbutton.clicked.connect(self.loadSimulacion)
         self.maquina = ''
         self.pushButton.clicked.connect(self.inicarSimulacion)
+        self.reportesbutton.clicked.connect(self.crearReportes)
+        self.simulaciones = []
+        self.simulaciones1 = listaSimple()
+        self.SimulacionCombo.currentIndexChanged[str].connect(self.reload)
+        self.ayudabutton.clicked.connect(self.showDatos)
 
     def loadConfiguracion(self):
         listaLineas = listaSimple()
@@ -59,28 +66,46 @@ class ventana(QMainWindow):
 
     def loadSimulacion(self):
         try:
+            self.SimulacionCombo.clear()
+            self.ProductosCombo.clear()
             ruta = QFileDialog.getOpenFileName(filter='Xml Files (*.xml)')
-
             tree = ET.parse(ruta[0])
             root = tree.getroot()
-            listaProductos = listaSimple()
+            listaProductos = []
+
             for elem in root:
                 if elem.tag == 'Nombre':
                     nombre = elem.text.strip()
-                    self.SimulacionCombo.addItem(nombre)
                 elif elem.tag == 'ListadoProductos':
                     for subelem in elem:
                         if subelem.tag == 'Producto':
                             nombreProducto = subelem.text.strip()
-                            self.ProductosCombo.addItem(nombreProducto)
-                        listaProductos.add(nombreProducto)
+                        listaProductos.append(nombreProducto)
             simulacion = Simulacion(nombre, listaProductos)
-            return simulacion
+            self.simulaciones.append(simulacion)
+            self.simulaciones1.add(simulacion)
+
+            for i in self.simulaciones:
+                self.SimulacionCombo.addItem(i.nombre)
+
+
+
         except Exception as e:
                 print(e)
 
+    def reload(self):
+        try:
+            self.ProductosCombo.clear()
+            selected = self.SimulacionCombo.currentText()
+            simulacion = self.simulaciones1.buscarP(selected)
+            for i in simulacion.listaProductos:
+                self.ProductosCombo.addItem(i)
+        except Exception as e:
+            print(e)
+
     def inicarSimulacion(self):
         try:
+            self.label_3.setVisible(False)
             self.tableWidget.clear()
             self.tableWidget.setColumnCount(0)
             self.tableWidget.setRowCount(0)
@@ -91,7 +116,7 @@ class ventana(QMainWindow):
             self.tableWidget.setColumnCount(int(self.maquina.cantidadLineas)+1)
             for i in range(int(self.maquina.cantidadLineas)+1):
                 if i == 0:
-                    self.tableWidget.setHorizontalHeaderItem(i, QTableWidgetItem('Segundo'))
+                    self.tableWidget.setHorizontalHeaderItem(i, QTableWidgetItem('Tiempo'))
                 else:
                     self.tableWidget.setHorizontalHeaderItem(i, QTableWidgetItem('Linea '+str(i)))
             datos.reverse()
@@ -100,16 +125,29 @@ class ventana(QMainWindow):
                 columna = 0
                 self.tableWidget.insertRow(fila)
                 for elemento in registro:
-                    self.tableWidget.setItem(fila,columna, QTableWidgetItem(elemento))
+                    if elemento == registro[0]:
+                        self.tableWidget.setItem(fila,columna, QTableWidgetItem('Segundo '+elemento))
+                    else:
+                        self.tableWidget.setItem(fila,columna, QTableWidgetItem(elemento))
                     columna += 1 
             self.show()
+            self.label_3.setText('Tiempo optimo: '+str(self.maquina.segundo))
+            self.label_3.setVisible(True)
 
         except Exception as e:
             print(e)
+    
+    def crearReportes(self):
+        try:
+            simulacion = self.SimulacionCombo.currentText()
+            texto = self.ProductosCombo.currentText()
+            self.maquina.crearXml(simulacion, texto)
+            self.maquina.crearHtml(texto)
+        except Exception as e:
+            print(e)       
 
-        
-        
-
+    def showDatos(self):
+        self.label_4.setText('Rony Omar Miguel Lopez, 201905750')
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     GUI = ventana()

@@ -28,3 +28,4 @@ class Producto:
 
     def inst(self):
         return self.instrucciones
+
