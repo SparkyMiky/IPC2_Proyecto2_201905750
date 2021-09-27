@@ -7,13 +7,14 @@ class listaDoble:
         self.ultimo = None
         self.id = id
         self.cantidadComponentes = int(cantidadComponentes)
-        self.tiempoEnsamblaje = tiempoEnsamblaje
+        self.tiempoEnsamblaje = int(tiempoEnsamblaje)
         self.size = 0
         self.rellenar(self.cantidadComponentes)
         self.posicionBrazo = 0
         self.cambioPosicion = False
         self.nodoActual = ''
         self.ensamblados = listaSimple()
+        self.accion = ''
 
     def add(self, dato):
         self.size += 1

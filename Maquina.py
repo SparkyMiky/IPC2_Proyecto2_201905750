@@ -1,3 +1,5 @@
+
+import threading
 class Maquina:
     def __init__(self,cantidadLineas, listaLineaProducciones,listaProductos):
         self.cantidadLineas = cantidadLineas
@@ -10,12 +12,18 @@ class Maquina:
         print(instrucciones)
         self.listaLineaProducciones.clear()
 
-        segundos = 0
+        segundo = 0
         ensamblando = False
+        datos = []
         try:
             while len(instrucciones) != 0:
-                segundos += 1
-                print('Analizando el segundo '+str(segundos)+'--------------------------------------')
+                segundo += 1
+                tupla=()
+                fila = ['Segundo '+str(segundo)]
+                for i in range(self.listaLineaProducciones.size):
+                    fila.append('No hacer nada')
+                
+                
                 self.listaLineaProducciones.reset()
 
                 for i in instrucciones:
@@ -37,26 +45,30 @@ class Maquina:
                         if lineaProduccion.posicionBrazo < componente:
                             lineaProduccion.avanzar()
                             lineaProduccion.cambioPosicion = True
-                            print('Linea '+linea+' avanzando hacia componente '+str(lineaProduccion.posicionBrazo))
+                            fila[int(linea)] = " Mover brazo - componente "+str(lineaProduccion.posicionBrazo)
                         elif lineaProduccion.posicionBrazo > componente:
                             lineaProduccion.retroceder()
                             lineaProduccion.cambioPosicion = True
-                            print('Linea '+linea+' retrocediendo hacia componente '+str(lineaProduccion.posicionBrazo))
+                            fila[int(linea)] = " Mover brazo - componente "+str(lineaProduccion.posicionBrazo)
                         else:
                             if i == instrucciones[0] and ensamblando == False:
-                                print("Linea "+linea+' esta ensamblando')
+                                fila[int(linea)] = " ensamblando - componente "+str(lineaProduccion.posicionBrazo)
+                                segundo += (lineaProduccion.tiempoEnsamblaje-1)
                                 lineaProduccion.ensamblados.add(i)
                                 ensamblando = True
                                 lineaProduccion.cambioPosicion = True
                             else:
-                                print('Linea '+linea+' no esta haciendo nada')
                                 lineaProduccion.cambioPosicion = True
                     else:
-                        continue
+                        continue 
+                tupla = tuple(fila)
+                datos.append(tupla)
+                
 
                 if ensamblando == True:
                     instrucciones.pop(0)
                     ensamblando = False
+            return datos
         except Exception as e:
             print(e)
 
