@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QFileDialog, QMainWindow, QApplication
+from PyQt5.QtWidgets import QFileDialog, QMainWindow, QApplication, QTableWidget, QTableWidgetItem
 from producto import Producto
 from Maquina import Maquina
 from Simulacion import Simulacion
@@ -81,11 +81,33 @@ class ventana(QMainWindow):
 
     def inicarSimulacion(self):
         try:
+            self.tableWidget.clear()
+            self.tableWidget.setColumnCount(0)
+            self.tableWidget.setRowCount(0)
+
             texto = self.ProductosCombo.currentText()
-            print('Producto a ensamblar '+texto)
-            self.maquina.ensamblar(texto)
+            datos = self.maquina.ensamblar(texto)
+
+            self.tableWidget.setColumnCount(int(self.maquina.cantidadLineas)+1)
+            for i in range(int(self.maquina.cantidadLineas)+1):
+                if i == 0:
+                    self.tableWidget.setHorizontalHeaderItem(i, QTableWidgetItem('Segundo'))
+                else:
+                    self.tableWidget.setHorizontalHeaderItem(i, QTableWidgetItem('Linea '+str(i)))
+            datos.reverse()
+            fila = 0
+            for registro in datos:
+                columna = 0
+                self.tableWidget.insertRow(fila)
+                for elemento in registro:
+                    self.tableWidget.setItem(fila,columna, QTableWidgetItem(elemento))
+                    columna += 1 
+            self.show()
+
         except Exception as e:
             print(e)
+
+        
         
 
 if __name__ == '__main__':
